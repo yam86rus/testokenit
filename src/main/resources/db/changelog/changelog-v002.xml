@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
+
+    <changeSet id="2" author="Yakushev">
+
+        <createTable tableName="prices">
+            <column name="id" type="int" autoIncrement="true" >
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="price" type="money">
+                <constraints nullable="false"/>
+            </column>
+            <column name="datetime" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="prices"
+                                 baseColumnNames="product_id"
+                                 referencedTableName="products"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_prices_products_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"
+        />
+
+    </changeSet>
+
+</databaseChangeLog>
