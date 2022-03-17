@@ -27,4 +27,13 @@ public class ProductServiceImpl implements ProductService {
     public long getProductsCount() {
         return productRepository.count();
     }
+
+    @Override
+    public void addSomeProduct(String product) {
+        try {
+            productRepository.addSomeProduct(product);
+        } catch (Exception e ) {
+            System.out.println(e);
+        }
+    }
 }

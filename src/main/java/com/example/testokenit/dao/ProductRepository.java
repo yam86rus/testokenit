@@ -2,8 +2,10 @@ package com.example.testokenit.dao;
 
 import com.example.testokenit.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,6 +29,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "WHERE DATE(prices.datetime) = :someDate \n" +
             "ORDER BY prices.datetime DESC;", nativeQuery = true)
     List<Object[]> findAllProductsAndPricesByDate123(@Param("someDate")LocalDate localDate);
+
+    // Добавляем новый товар
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query(value = "INSERT INTO products (name) VALUES (:someProduct)",nativeQuery = true)
+    void addSomeProduct(@Param("someProduct") String product);
+
 
     long count();
 }

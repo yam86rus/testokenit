@@ -7,4 +7,5 @@ public interface ProductService {
     List<Object[]> getAllProductsAndPriceByDate();
     List<Object[]> getAllProductsAndPriceByDate123(LocalDate localDate);
     long getProductsCount();
+    void addSomeProduct(String product);
 }
