@@ -4,15 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 
 @Service
 public class ReadFileImpl implements ReadFileService {
@@ -22,16 +22,11 @@ public class ReadFileImpl implements ReadFileService {
     @Autowired
     private PriceService priceService;
 
+    @Autowired
+    ReadFileService readFileService;
+
     @Value("${upload.path}")
     private String path;
-
-    @Scheduled(cron = "${interval-in-cron}")
-    public void read() {
-
-        System.out.println("Запуск по расписанию. Метод read класса ReadFile - выполнен");
-        System.out.println("Путь до файла: " + path);
-
-    }
 
     @Override
     public boolean saveLogs(String message) {
@@ -69,6 +64,21 @@ public class ReadFileImpl implements ReadFileService {
     }
 
     @Override
+    public String getFilePath(String path) {
+        File dir = new File(path);
+
+        // Сохраняем только файлы с раcширением 'csv'
+        List<String> list = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            if (file.getName().substring(file.getName().lastIndexOf(".")).equals(".csv")) {
+                list.add(file.getName());
+            }
+        }
+        String result = path + list.get(0);
+        return result;
+    }
+
+    @Override
     public boolean isValid() {
         File dir = new File(path);
 
@@ -83,20 +93,26 @@ public class ReadFileImpl implements ReadFileService {
 
         // Если больше 1-ого файла, то пишем в лог и завершаем работу
         if (list.size() > 1) {
-            saveLogs("Файлов больше чем 1, непонятно какой обрабатывать. " + LocalDateTime.now());
-            System.out.println("Файлов больше чем 1, непонятно какой обрабатывать. " + LocalDateTime.now());
+            saveLogs("Файлов с расширением csv больше чем 1, непонятно какой обрабатывать. " + LocalDateTime.now());
             return false;
         }
 
-        saveLogs("Все успешно обработано! Ошибок нет! " + LocalDateTime.now());
-        System.out.println("Все успешно обработано! Ошибок нет!");
+        // Если меньше 1-ого, то пишем в лог и завершаем работу
+        if (list.size() == 0) {
+            saveLogs("Файлов для загрузки не обнаружено. " + LocalDateTime.now());
+            return false;
+        }
+
+        saveLogs("Файл найден! Загрузка данных из файла произведена. " + LocalDateTime.now());
         return true;
 
     }
 
     @Override
     public List<String[]> readFromFile(String path) {
-        String csvFile = "/home/app/upload/Нужный файл3.csv";
+
+        // Получаем полный путь до файла, с указанием имени
+        String csvFile = getFilePath(path);
         BufferedReader br = null;
         String line = "";
         String cvsSplitBy = ",";
@@ -126,33 +142,48 @@ public class ReadFileImpl implements ReadFileService {
     }
 
     @Override
-
     public boolean writeToDb(List<String[]> data) {
         // Заполняем две таблицы (products, prices)
         for (String[] strings : data) {
             System.out.println(Arrays.toString(strings));
         }
-        System.out.println("//--//--//--//--//--//--");
-
-        System.out.println("Добавляем продукт (products.name, product.id), в таблицу products");
+        // Вносим в БД информацию в таблицу products
         for (String[] strings : data) {
             productService.addSomeProduct(strings[1], strings[0]);
         }
-        System.out.println("//--//--//--//--//--//--");
-        System.out.println("Добавляем в таблицу prices цену, дату, product_id");
-
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
         LocalDateTime dateTime;
 
+        // Вносим в БД информацию в таблицу prices
         for (String[] strings : data) {
             System.out.println(strings[0]);
             dateTime = LocalDateTime.parse(strings[4], formatter);
-            priceService.addSomeProducts(strings[2],Double.parseDouble(strings[3]), dateTime, strings[0]);
+            priceService.addSomeProducts(strings[2], Double.parseDouble(strings[3]), dateTime, strings[0]);
         }
 
         return true;
     }
 
+    // Выполнение задачи загрузки данных по расписанию
+    @Scheduled(cron = "${interval-in-cron}")
+    public void uploadData() {
+        if (readFileService.isValid()) {
+            readFileService.writeToDb(readFileService.readFromFile(path));
+            deleteFile(path);
+        }
+
+    }
+
+    public boolean deleteFile(String path) {
+        try {
+            Files.deleteIfExists(Path.of(getFilePath(path)));
+            saveLogs("Файл успешно удален "+ LocalDateTime.now());
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 }

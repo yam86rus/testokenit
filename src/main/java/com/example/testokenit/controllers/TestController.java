@@ -1,5 +1,7 @@
 package com.example.testokenit.controllers;
 
+import com.example.testokenit.service.PriceService;
+import com.example.testokenit.service.ProductService;
 import com.example.testokenit.service.ReadFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,11 +19,14 @@ public class TestController {
     @Autowired
     private ReadFileService readFileService;
 
+
     @GetMapping("/loadData")
     public void showInfo() {
         if (readFileService.isValid()) {
             readFileService.writeToDb(readFileService.readFromFile(path));
+            readFileService.deleteFile(path);
         }
+
 
     }
 }

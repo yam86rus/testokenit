@@ -1,15 +1,16 @@
 package com.example.testokenit.controllers;
 
+import com.example.testokenit.exception_handling.NoSuchProductsOnDataException;
+import com.example.testokenit.exception_handling.PriceIncorrectDate;
 import com.example.testokenit.json.ProductAndPrice;
 import com.example.testokenit.service.ProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -39,9 +40,14 @@ public class ProductsController {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+        if (getAllProductsAndPrice.isEmpty()){
+            throw new NoSuchProductsOnDataException("На указанную дату нет товаров");
+        }
 
         return result;
     }
+
+
 
 
 }
