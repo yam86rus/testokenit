@@ -27,8 +27,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "FROM prices\n" +
             "         JOIN products ON products.id = prices.product_id\n" +
             "WHERE DATE(prices.datetime) = :someDate \n" +
-            "ORDER BY prices.datetime DESC;", nativeQuery = true)
-    List<Object[]> findAllProductsAndPricesByDate123(@Param("someDate")LocalDate localDate);
+            "ORDER BY prices.datetime DESC, prices.product_id;", nativeQuery = true)
+    List<Object[]> findAllProductsAndPricesByDate(@Param("someDate")LocalDate localDate);
 
     // Добавляем новый товар
     @Transactional

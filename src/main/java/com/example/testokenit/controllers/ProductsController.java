@@ -1,7 +1,11 @@
 package com.example.testokenit.controllers;
 
+import com.example.testokenit.json.ProductAndPrice;
 import com.example.testokenit.service.ProductService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,7 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(value = "/api",produces = {MediaType.APPLICATION_JSON_VALUE })
 public class ProductsController {
 
     @Autowired
@@ -23,23 +27,21 @@ public class ProductsController {
         return productService.getProductsCount();
     }
 
-//     Возвращает название товара и количество на определенную дату
+
+    // Возвращает название товара и количество на определенную дату
     @GetMapping("/products/")
-    public List<Object[]> allProducts() {
-        List<Object[]> getAllProductsAndPrice = productService.getAllProductsAndPriceByDate();
-        System.out.println(getAllProductsAndPrice);
-        return getAllProductsAndPrice;
+    public String getAllProducts(@RequestParam(name = "date") LocalDate localDate) {
+        List<ProductAndPrice> getAllProductsAndPrice = productService.getAllProductsAndPriceByDate(localDate);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String result = null;
+        try {
+            result = objectMapper.writeValueAsString(getAllProductsAndPrice);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
-
-    //     Возвращает название товара и количество на определенную дату
-    @GetMapping("/products123/")
-    public List<Object[]> getAllProducts(@RequestParam(name = "date") LocalDate localDate) {
-        List<Object[]> getAllProductsAndPrice = productService.getAllProductsAndPriceByDate123(localDate);
-        System.out.println(localDate);
-
-        return getAllProductsAndPrice;
-    }
-
 
 
 }

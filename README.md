@@ -23,11 +23,13 @@ product_id, product_name, price_id, price, price_datetime
 `1;Табурет;2;1499;2022-03-17T07:00:00Z`
 
 ### Выполнение задачи по расписанию
-Время расписания задается в application.properties.
-Сейчас выставлено выполнение через каждый час
 
+Время расписания задается в application.properties. Сейчас выставлено выполнение через каждый час
+
+Для тестирования функции загрузки создан отдельный эндпоинт /api/loadData, который запускает процедуру загрузки данных из файла
 ### Логи
-Данные об операциях пишутся в файл logs.txt 
+
+Данные об операциях пишутся в файл logs.txt
 
 ### Описание запросов и примеры ответов
 
@@ -37,31 +39,88 @@ product_id, product_name, price_id, price, price_datetime
 Response (example)
 
 ```json
-
+[
+  {
+    product: "системный блок",
+    price: 36800
+  },
+  {
+    product: "системный блок",
+    price: 36800
+  },
+  {
+    product: "системный блок",
+    price: 36800
+  },
+  {
+    product: "системный блок",
+    price: 36800
+  },
+  {
+    product: "мышка",
+    price: 500.99
+  },
+  {
+    product: "монитор",
+    price: 15000
+  },
+  {
+    product: "монитор",
+    price: 15000
+  }
+]
 ```
 
 #### Получение статистики
 
-* Количество товаров: localhost:8086/api/products/statistic/products
-  
+* Количество товаров: /api/products/statistic/products
+
 Response (example)
 
 ```json
-
+4
 ```
-* Как часто менялась цена товара. Группировка по товарам: localhost:8086/api/products/statistic/changesByName
+
+* Как часто менялась цена товара. Группировка по товарам: /api/products/statistic/changesByName
 
 Response (example)
 
 ```json
-
+[
+  {
+    name: "монитор",
+    frequency: 10
+  },
+  {
+    name: "системный блок",
+    frequency: 10
+  },
+  {
+    name: "мышка",
+    frequency: 25
+  }
+]
 ```
-* Как часто менялась цена товара. Группировка по дням: localhost:8086//products/statistic/changesByDate
+
+* Как часто менялась цена товара. Группировка по дням: api/products/statistic/changesByDate
 
 Response (example)
 
 ```json
-
+[
+  {
+    date: "2022-03-17",
+    frequency: 15
+  },
+  {
+    date: "2022-03-16",
+    frequency: 15
+  },
+  {
+    date: "2022-03-15",
+    frequency: 15
+  }
+]
 ```
 
 
