@@ -26,9 +26,9 @@ public class PriceServiceImpl implements PriceService {
     }
 
     @Override
-    public void addSomeProducts(double price, LocalDateTime dateTime, String productId) {
+    public void addSomeProducts(String id, double price, LocalDateTime dateTime, String productId) {
         try {
-            priceRepository.addSomePrices(price, dateTime, productId);
+            priceRepository.addSomePrices(id,price, dateTime, productId);
         } catch (Exception e) {
             System.out.println(e);
         }

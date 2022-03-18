@@ -33,8 +33,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     // Добавляем новый товар
     @Transactional
     @Modifying(clearAutomatically = true)
-    @Query(value = "INSERT INTO products (name) VALUES (:someProduct)",nativeQuery = true)
-    void addSomeProduct(@Param("someProduct") String product);
+    @Query(value = "INSERT INTO products (id,name) VALUES (to_number(:id,'999999'),:someProduct)",nativeQuery = true)
+    void addSomeProduct(@Param("someProduct") String product, @Param("id") String id);
 
 
     long count();

@@ -29,9 +29,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void addSomeProduct(String product) {
+    public void addSomeProduct(String product, String id) {
         try {
-            productRepository.addSomeProduct(product);
+            productRepository.addSomeProduct(product,id);
         } catch (Exception e ) {
             System.out.println(e);
         }

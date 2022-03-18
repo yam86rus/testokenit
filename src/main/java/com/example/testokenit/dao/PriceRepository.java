@@ -29,11 +29,11 @@ public interface PriceRepository extends JpaRepository<Price, Integer> {
             "ORDER BY date DESC;", nativeQuery = true)
     List<Object[]> findAllChangesByDate();
 
-    // Добавляем записи из чтения файла
+    // Добавляем записи из прочтенного файла
     @Transactional
     @Modifying(clearAutomatically = true)
-    @Query(value = "INSERT INTO prices (price,datetime,product_id) VALUES (:price,:datetime,to_number(:product_id,'999999'));", nativeQuery = true)
-    void addSomePrices(@Param("price") double price, @Param("datetime") LocalDateTime dateTime, @Param("product_id") String productId);
+    @Query(value = "INSERT INTO prices (id,price,datetime,product_id) VALUES (to_number(:id,'999999'),:price,:datetime,to_number(:product_id,'999999'));", nativeQuery = true)
+    void addSomePrices(@Param("id") String id, @Param("price") double price, @Param("datetime") LocalDateTime dateTime, @Param("product_id") String productId);
 
 
 }

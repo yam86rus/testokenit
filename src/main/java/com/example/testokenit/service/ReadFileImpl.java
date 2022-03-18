@@ -134,21 +134,21 @@ public class ReadFileImpl implements ReadFileService {
         }
         System.out.println("//--//--//--//--//--//--");
 
-        System.out.println("Добавляем продукт (products.name) в таблицу products");
+        System.out.println("Добавляем продукт (products.name, product.id), в таблицу products");
         for (String[] strings : data) {
-            productService.addSomeProduct(strings[1]);
+            productService.addSomeProduct(strings[1], strings[0]);
         }
         System.out.println("//--//--//--//--//--//--");
         System.out.println("Добавляем в таблицу prices цену, дату, product_id");
 
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
         LocalDateTime dateTime;
 
         for (String[] strings : data) {
             System.out.println(strings[0]);
-            dateTime = LocalDateTime.parse(strings[3], formatter);
-            priceService.addSomeProducts(Double.parseDouble(strings[2]), dateTime, strings[0]);
+            dateTime = LocalDateTime.parse(strings[4], formatter);
+            priceService.addSomeProducts(strings[2],Double.parseDouble(strings[3]), dateTime, strings[0]);
         }
 
         return true;

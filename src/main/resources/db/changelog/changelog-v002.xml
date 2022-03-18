@@ -8,8 +8,8 @@
     <changeSet id="2" author="Yakushev">
 
         <createTable tableName="prices">
-            <column name="id" type="int" autoIncrement="true" >
-                <constraints primaryKey="true" nullable="false"/>
+            <column name="id" type="int" autoIncrement="false" >
+                <constraints primaryKey="false" nullable="false"/>
             </column>
             <column name="price" type="money">
                 <constraints nullable="false"/>

@@ -7,5 +7,5 @@ public interface PriceService {
 
     List<Object[]> findAllPriceChangingByName();
     List<Object[]> findAllPriceChangingByDate();
-    void addSomeProducts(double price, LocalDateTime dateTime, String productId);
+    void addSomeProducts(String id,double price, LocalDateTime dateTime, String productId);
 }
